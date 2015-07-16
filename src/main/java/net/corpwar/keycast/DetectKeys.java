@@ -89,6 +89,20 @@ public class DetectKeys implements NativeKeyListener {
         acceptedKeys.add(21);
         acceptedKeys.add(44);
 
+        // F1-F10
+        acceptedKeys.add(59);
+        acceptedKeys.add(60);
+        acceptedKeys.add(61);
+        acceptedKeys.add(62);
+        acceptedKeys.add(63);
+        acceptedKeys.add(64);
+        acceptedKeys.add(65);
+        acceptedKeys.add(66);
+        acceptedKeys.add(67);
+        acceptedKeys.add(68);
+        acceptedKeys.add(87);
+        acceptedKeys.add(88);
+
         // Esc
         acceptedKeys.add(1);
 

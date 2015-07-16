@@ -204,7 +204,8 @@ public class Keycast extends JFrame{
                     settings.pack();
                     settings.setVisible(true);
                 });
-                trayMenu.add(settingsMenu);
+                // TODO Fix Settings view
+                //trayMenu.add(settingsMenu);
                 MenuItem resetMenu = new MenuItem("Reset");
                 resetMenu.addActionListener(e1 -> {
                     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -242,7 +243,7 @@ public class Keycast extends JFrame{
                 props.load(is);
                 System.out.println("windowX:" + props.getProperty("windowX", "0") + " windowY:" + props.getProperty("windowX", "0"));
                 System.out.println("opacity:" + props.getProperty("opacity", "0.7"));
-                setLocation(new Integer(props.getProperty("windowX", "0")), new Integer(props.getProperty("windowX", "0")));
+                //setLocation(new Integer(props.getProperty("windowX", "0")), new Integer(props.getProperty("windowX", "0")));
                 //keycast.setOpacity(new Float(props.getProperty("opacity", "0.7")));
             }
         } catch (FileNotFoundException e) {
