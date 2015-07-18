@@ -20,6 +20,8 @@ package net.corpwar.keycast;
 
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
+import org.jnativehook.mouse.NativeMouseWheelEvent;
+import org.jnativehook.mouse.NativeMouseWheelListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -32,18 +34,22 @@ import java.util.List;
  * corpwar-keycast
  * Created by Daniel Ekedahl on 2015-07-12.
  */
-public class DetectKeys implements NativeKeyListener {
+public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener {
 
+    private Keycast keycast;
     private JLabel keyPressed, shiftLbl, ctrlLbl, altLbl;
     private boolean ctrl = false, alt = false, shift = false;
     private HashMap<String, ImageIcon> keyImages = new HashMap<>();
     private List<Integer> acceptedKeys = new ArrayList<>();
+    private StringBuilder sb;
 
-    public DetectKeys(JLabel keyPressed, JLabel shiftLbl, JLabel ctrlLbl, JLabel altLbl) {
+    public DetectKeys(Keycast keycast, JLabel keyPressed, JLabel shiftLbl, JLabel ctrlLbl, JLabel altLbl) {
         this.keyPressed = keyPressed;
         this.shiftLbl = shiftLbl;
         this.ctrlLbl = ctrlLbl;
         this.altLbl = altLbl;
+        this.keycast = keycast;
+        sb = new StringBuilder();
         addAccptedKeys();
         initKeyImages();
     }
@@ -129,10 +135,6 @@ public class DetectKeys implements NativeKeyListener {
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-        if (acceptedKeys.contains(nativeKeyEvent.getKeyCode())) {
-            keyPressed.setText(NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
-        }
-
         if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_SHIFT_L || nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_SHIFT_R) {
             shift = true;
         }
@@ -142,6 +144,24 @@ public class DetectKeys implements NativeKeyListener {
         if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_CONTROL_L || nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_CONTROL_R) {
             ctrl = true;
         }
+
+        if (acceptedKeys.contains(nativeKeyEvent.getKeyCode())) {
+
+            String keyPressShow = "<";
+            String keyPress = NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode());
+            keyPressed.setText(keyPress);
+            if (shift) {
+                keyPressShow = keyPressShow + " Shift +";
+            }
+            if (alt) {
+                keyPressShow = keyPressShow + " Alt +";
+            }
+            if (ctrl) {
+                keyPressShow = keyPressShow + " Ctrl +";
+            }
+            keycast.getPkf().setKeyText(keyPressShow + " " + keyPress + " >");
+        }
+
         changeActionKeys();
     }
 
@@ -157,12 +177,13 @@ public class DetectKeys implements NativeKeyListener {
         if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_CONTROL_L || nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_CONTROL_R) {
             ctrl = false;
         }
+        keyPressed.setText("");
         changeActionKeys();
     }
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-        // not use
+
     }
 
     private void changeActionKeys() {
@@ -181,5 +202,27 @@ public class DetectKeys implements NativeKeyListener {
         } else {
             altLbl.setIcon(keyImages.get("altUp"));
         }
+
+    }
+
+    @Override
+    public void nativeMouseWheelMoved(NativeMouseWheelEvent nativeMouseWheelEvent) {
+        String keyPressShow = "<";
+        if (shift) {
+            keyPressShow = keyPressShow + " Shift +";
+        }
+        if (alt) {
+            keyPressShow = keyPressShow + " Alt +";
+        }
+        if (ctrl) {
+            keyPressShow = keyPressShow + " Ctrl +";
+        }
+        if (nativeMouseWheelEvent.getWheelRotation() < 0) {
+            keycast.getPkf().setKeyText(keyPressShow + " Wheel Up >");
+        } else if (nativeMouseWheelEvent.getWheelRotation() > 0) {
+            keycast.getPkf().setKeyText(keyPressShow + " Wheel Down >");
+        }
+
+
     }
 }

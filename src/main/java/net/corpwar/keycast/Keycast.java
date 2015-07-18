@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 public class Keycast extends JFrame{
 
     private static Keycast keycast;
+    private PressedKeysFrame pkf;
     private TrayIcon trayIcon;
     private SystemTray tray;
     private int posX=0,posY=0;
@@ -52,6 +53,7 @@ public class Keycast extends JFrame{
     public Keycast() {
         super("Corpwar Keycast");
         keycast = this;
+        pkf = new PressedKeysFrame();
         // Set the event dispatcher to a swing safe executor service.
         GlobalScreen.setEventDispatcher(new SwingDispatchService());
 
@@ -88,22 +90,18 @@ public class Keycast extends JFrame{
 
 
 
-        this.addMouseListener(new MouseAdapter()
-        {
-            public void mousePressed(MouseEvent e)
-            {
-                posX=e.getX();
-                posY=e.getY();
+        this.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                posX = e.getX();
+                posY = e.getY();
             }
         });
 
-        this.addMouseMotionListener(new MouseAdapter()
-        {
-            public void mouseDragged(MouseEvent evt)
-            {
+        this.addMouseMotionListener(new MouseAdapter() {
+            public void mouseDragged(MouseEvent evt) {
                 //sets frame position when mouse dragged
-                setLocation (evt.getXOnScreen()-posX,evt.getYOnScreen()-posY);
-
+                setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY);
+                pkf.setLocation(evt.getXOnScreen() - posX, evt.getYOnScreen() - posY - pkf.getHeight());
             }
         });
 
@@ -115,9 +113,14 @@ public class Keycast extends JFrame{
         setLocationRelativeTo(null);
         setUndecorated(true);
         setAlwaysOnTop(true);
-        setSize(450,90);
+        setSize(450, 90);
+        pkf.setLocation(getX(), getY() - pkf.getHeight());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         loadSettings();
+    }
+
+    public PressedKeysFrame getPkf() {
+        return pkf;
     }
 
     private void initTextLabel() {
@@ -145,7 +148,6 @@ public class Keycast extends JFrame{
         keyLabel.setFont(new Font("Serif", Font.PLAIN, 40));
         gbc.gridx = 4;
         gbc.gridy = 0;
-
         gbc.weightx = gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(keyLabel, gbc);
@@ -183,11 +185,13 @@ public class Keycast extends JFrame{
             ex.printStackTrace();
             System.exit(1);
         }
-        GlobalScreen.addNativeKeyListener(new DetectKeys(keyLabel, shift, ctrl, alt));
+        DetectKeys detectKeys = new DetectKeys(this, keyLabel, shift, ctrl, alt);
+        GlobalScreen.addNativeKeyListener(detectKeys);
+        GlobalScreen.addNativeMouseWheelListener(detectKeys);
         GlobalScreen.addNativeMouseListener(new DetectMouseKeys(mouseLabel, mouseImages));
     }
 
-    public void addTrayIcon() {
+    private void addTrayIcon() {
 
         try {
             Image image = ImageIO.read(getClass().getResource("/images/mouseIcon.png"));
