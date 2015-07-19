@@ -1,3 +1,21 @@
+/**************************************************************************
+ * CorpNet
+ * Copyright (C) 2015 Daniel Ekedahl
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ **************************************************************************/
 package net.corpwar.keycast;
 
 import javax.swing.*;
@@ -10,7 +28,7 @@ import java.awt.geom.Rectangle2D;
  * corpwar-keycast
  * Created by Ghost on 2015-07-18.
  */
-public class PressedKeysFrame extends JFrame implements Runnable {
+public class PressedKeysFrame extends JDialog implements Runnable {
 
     private Thread frame;
     private long deltaTime;
@@ -20,7 +38,18 @@ public class PressedKeysFrame extends JFrame implements Runnable {
     private final boolean isTranslucencySupported;
     private GridBagConstraints gbc = new GridBagConstraints();
 
+    // Time in milliseconds
+    private float timeBeforeFade = 2000;
+
+    // Time in milliseconds
+    private float timeFading = 1000;
+    private float timeInFade = 0;
+
+    private Color backgroundColor = Color.LIGHT_GRAY;
+
     private JLabel text;
+    private String lastText;
+    private Integer sameText = 1;
 
     public PressedKeysFrame() {
         super();
@@ -53,6 +82,8 @@ public class PressedKeysFrame extends JFrame implements Runnable {
         gbc.fill = GridBagConstraints.BOTH;
         add(text,gbc);
 
+        this.getContentPane().setBackground(backgroundColor);
+
         // Display the window.
         setVisible(true);
 
@@ -61,8 +92,16 @@ public class PressedKeysFrame extends JFrame implements Runnable {
     }
 
     public void setKeyText(String keyText) {
-        text.setText(keyText);
+        if (keyText.equals(lastText)) {
+            sameText++;
+            text.setText(keyText + " x" + sameText);
+        } else {
+            lastText = keyText;
+            sameText = 1;
+            text.setText(keyText);
+        }
         setOpacity(0.7f);
+        timeInFade = 0f;
     }
 
     public void dispose() {
@@ -93,12 +132,15 @@ public class PressedKeysFrame extends JFrame implements Runnable {
     private void doUpdate(long deltaTime) {
         if (isTranslucencySupported) {
             if (getOpacity() > 0) {
-                float opacity = getOpacity() - (deltaTime / 5000f);
+                timeInFade += deltaTime;
+                if (timeInFade > timeBeforeFade) {
+                    float opacity = getOpacity() - (deltaTime / timeFading);
 
-                if (opacity < 0) {
-                    setOpacity(0);
-                } else {
-                    setOpacity(opacity);
+                    if (opacity < 0) {
+                        setOpacity(0);
+                    } else {
+                        setOpacity(opacity);
+                    }
                 }
             }
         }

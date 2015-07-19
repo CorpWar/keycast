@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  */
 public class Keycast extends JFrame{
 
-    private static Keycast keycast;
+    //private static Keycast keycast;
     private PressedKeysFrame pkf;
     private TrayIcon trayIcon;
     private SystemTray tray;
@@ -49,10 +49,11 @@ public class Keycast extends JFrame{
     private JLabel keyLabel;
     private JLabel shift, ctrl, alt;
     private GridBagConstraints gbc = new GridBagConstraints();
+    private Color backgroundColor = Color.LIGHT_GRAY;
 
     public Keycast() {
         super("Corpwar Keycast");
-        keycast = this;
+       //keycast = this;
         pkf = new PressedKeysFrame();
         // Set the event dispatcher to a swing safe executor service.
         GlobalScreen.setEventDispatcher(new SwingDispatchService());
@@ -114,9 +115,34 @@ public class Keycast extends JFrame{
         setUndecorated(true);
         setAlwaysOnTop(true);
         setSize(450, 90);
+        this.getContentPane().setBackground(backgroundColor);
         pkf.setLocation(getX(), getY() - pkf.getHeight());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        setTransparent();
         loadSettings();
+
+        // Display the window.
+        setVisible(true);
+    }
+
+    private void setTransparent() {
+        // Determine what the GraphicsDevice can support.
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        boolean isTranslucencySupported = gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT);
+
+        //If shaped windows aren't supported, exit.
+        // DON'T USING THIS AT THE MOMENT
+//        if (!gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT)) {
+//            System.err.println("Shaped windows are not supported");
+//            System.exit(0);
+//        }
+
+        // Set the window default to 70% translucency, if supported.
+        if (isTranslucencySupported) {
+            setOpacity(0.7f);
+        }
     }
 
     public PressedKeysFrame getPkf() {
@@ -228,11 +254,17 @@ public class Keycast extends JFrame{
                 tray.add(trayIcon);
 
             }
+
+            // Add icon on taskbar
+            setIconImage(image);
+
         } catch (IOException e) {
             e.printStackTrace();
         }  catch (AWTException e) {
             System.err.println("TrayIcon could not be added.");
         }
+
+
     }
 
     private void loadSettings() {
@@ -279,35 +311,8 @@ public class Keycast extends JFrame{
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
 
-        // Determine what the GraphicsDevice can support.
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        final boolean isTranslucencySupported = gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT);
-
-        //If shaped windows aren't supported, exit.
-        if (!gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT)) {
-            System.err.println("Shaped windows are not supported");
-            System.exit(0);
-        }
-
-        //If translucent windows aren't supported,
-        //create an opaque window.
-        if (!isTranslucencySupported) {
-            System.out.println("Translucency is not supported, creating an opaque window");
-        }
-
         // Create the GUI on the event-dispatching thread
-        SwingUtilities.invokeLater(() -> {
-            keycast = new Keycast();
-
-            // Set the window to 70% translucency, if supported.
-            if (isTranslucencySupported) {
-                keycast.setOpacity(0.7f);
-            }
-
-            // Display the window.
-            keycast.setVisible(true);
-        });
+        SwingUtilities.invokeLater(Keycast::new);
 
 
     }
