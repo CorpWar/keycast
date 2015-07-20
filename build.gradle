@@ -13,7 +13,12 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile 'commons-io:commons-io:2.4'
     compile 'com.1stleg:jnativehook:2.0.2'
+    compile 'com.intellij:forms_rt:7.0.3'
 
+}
+
+configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
 }
 
 //create a single Jar with all dependencies
