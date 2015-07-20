@@ -9,10 +9,8 @@ Keycast are a java open-source keystroke visualizer that display what buttons yo
 You can just download the jar and run it. So just head over to [Release section](https://github.com/CorpWar/keycast/releases) and download the latest JAR file. After you download it you should be able to just run it. I have compiled this with Java 8 so you need at least java 8. If you find any bugs or have idés for improvments just write an issue.
 
 ![CorpWar KeyCast Screenshot](http://www.corpwar.net/wp-content/uploads/2015/07/KeyCast_mainScreen.png)
-Screenshot how it can look like
 
 ![CorpWar KeyCast Settings](http://www.corpwar.net/wp-content/uploads/2015/07/KeyCast_settings.png)
-Settings window
 
 ## Source
 If you have other idés then just fork the source and make something fun out of it. It is all open source.
