@@ -1,6 +1,8 @@
 ![CorpWar KeyCast](http://www.corpwar.net/wp-content/uploads/2015/07/keycast.png)
 =======
 
+[![Build Status](http://90.230.165.227:7890/buildStatus/icon?job=CorpWar KeyCast)](http://90.230.165.227:7890/job/CorpWar%20KeyCast/)
+
 Keycast are a java open-source keystroke visualizer that display what buttons you are pressing. This can be very good when you want to display your keystroke while recording screencasts. I hope this work for all OS but I have problem to test it. So if someone want to test it on other then Windows I would be happy.
 
 ## Run application
