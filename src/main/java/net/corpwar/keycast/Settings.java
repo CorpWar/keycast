@@ -19,17 +19,32 @@
 package net.corpwar.keycast;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.*;
 
 public class Settings extends JDialog {
+    private Keycast keycast;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
+    private JTextField txtBeforeFade;
+    private JTextField txtFading;
+    private JCheckBox showMainWindowCheckBox;
+    private JCheckBox showTypedKeyWindowCheckBox;
+    private JSlider slidMainWin;
+    private JSlider slidKeyWin;
+    private JButton btnMainWinColor;
+    private JButton btnKeyWinColor;
 
-    public Settings() {
+    public Settings(Keycast keycast) {
+        this.keycast = keycast;
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+
+        populateData();
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -57,22 +72,102 @@ public class Settings extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        txtBeforeFade.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                keycast.getPkf().setTimeBeforeFade(Long.valueOf(txtBeforeFade.getText()));
+            }
+        });
+        txtFading.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                keycast.getPkf().setTimeFading(Long.valueOf(txtFading.getText()));
+            }
+        });
+
+        showMainWindowCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                keycast.setVisible(!keycast.isVisible());
+            }
+        });
+        showTypedKeyWindowCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                keycast.getPkf().setVisible(!keycast.getPkf().isVisible());
+            }
+        });
+
+        slidMainWin.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider)e.getSource();
+                if (!source.getValueIsAdjusting()) {
+                    keycast.setOpacity(slidMainWin.getValue() / 100f);
+                }
+            }
+        });
+        slidKeyWin.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider)e.getSource();
+                if (!source.getValueIsAdjusting()) {
+                    keycast.getPkf().opacityValue  = (slidKeyWin.getValue() / 100f);
+                }
+            }
+        });
+
+
+        btnMainWinColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color c = JColorChooser.showDialog(null, "Choose a Color", getForeground());
+                if (c != null) {
+                    keycast.getContentPane().setBackground(c);
+                }
+            }
+        });
+
+        btnKeyWinColor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color c = JColorChooser.showDialog(null, "Choose a Color", getForeground());
+                if (c != null) {
+                    keycast.getPkf().getContentPane().setBackground(c);
+                }
+            }
+        });
+    }
+
+
+
+    private void populateData() {
+        txtBeforeFade.setText(Long.toString(keycast.getPkf().getTimeBeforeFade()));
+        txtFading.setText(Long.toString(keycast.getPkf().getTimeFading()));
+        showMainWindowCheckBox.setEnabled(keycast.isVisible());
+        showTypedKeyWindowCheckBox.setEnabled(keycast.getPkf().isVisible());
+        if (keycast.isTranslucencySupported()) {
+            slidMainWin.setEnabled(true);
+            slidMainWin.setValue(Math.round(keycast.getOpacity() * 100));
+        } else {
+            slidMainWin.setEnabled(false);
+        }
+        if (keycast.getPkf().isTranslucencySupported) {
+            slidKeyWin.setEnabled(true);
+            slidKeyWin.setValue(Math.round(keycast.getPkf().opacityValue * 100));
+        } else {
+            slidKeyWin.setEnabled(false);
+        }
     }
 
     private void onOK() {
-// add your code here
+        keycast.saveSettings();
         dispose();
     }
 
     private void onCancel() {
-// add your code here if necessary
+        keycast.loadSettings();
         dispose();
-    }
-
-    public static void main(String[] args) {
-        Settings dialog = new Settings();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
     }
 }

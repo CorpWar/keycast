@@ -30,20 +30,24 @@ import java.awt.geom.Rectangle2D;
  */
 public class PressedKeysFrame extends JDialog implements Runnable {
 
+    public final boolean isTranslucencySupported;
+    public float opacityValue = 0.7f;
+
+    private final long sleepTime = 20;
+
     private Thread frame;
     private long deltaTime;
     private long lastTime;
     private boolean running = true;
-    private long sleepTime = 20;
-    private final boolean isTranslucencySupported;
+
     private GridBagConstraints gbc = new GridBagConstraints();
 
     // Time in milliseconds
-    private float timeBeforeFade = 2000;
+    private long timeBeforeFade = 2000;
 
     // Time in milliseconds
-    private float timeFading = 1000;
-    private float timeInFade = 0;
+    private long timeFading = 1000;
+    private long timeInFade = 0;
 
     private Color backgroundColor = Color.LIGHT_GRAY;
 
@@ -71,7 +75,7 @@ public class PressedKeysFrame extends JDialog implements Runnable {
         isTranslucencySupported = gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT);
         // Set the window to 70% translucency, if supported.
         if (isTranslucencySupported) {
-            this.setOpacity(0.7f);
+            this.setOpacity(opacityValue);
         }
 
         text = new JLabel();
@@ -91,6 +95,26 @@ public class PressedKeysFrame extends JDialog implements Runnable {
         frame.start();
     }
 
+    public long getTimeBeforeFade() {
+        return timeBeforeFade;
+    }
+
+    public void setTimeBeforeFade(long timeBeforeFade) {
+        this.timeBeforeFade = timeBeforeFade;
+    }
+
+    public long getTimeFading() {
+        return timeFading;
+    }
+
+    public void setTimeFading(long timeFading) {
+        this.timeFading = timeFading;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
     public void setKeyText(String keyText) {
         if (keyText.equals(lastText)) {
             sameText++;
@@ -100,8 +124,8 @@ public class PressedKeysFrame extends JDialog implements Runnable {
             sameText = 1;
             text.setText(keyText);
         }
-        setOpacity(0.7f);
-        timeInFade = 0f;
+        setOpacity(opacityValue);
+        timeInFade = 0;
     }
 
     public void dispose() {
@@ -134,8 +158,8 @@ public class PressedKeysFrame extends JDialog implements Runnable {
             if (getOpacity() > 0) {
                 timeInFade += deltaTime;
                 if (timeInFade > timeBeforeFade) {
-                    float opacity = getOpacity() - (deltaTime / timeFading);
 
+                    float opacity = getOpacity() - (deltaTime / (float)timeFading);
                     if (opacity < 0) {
                         setOpacity(0);
                     } else {

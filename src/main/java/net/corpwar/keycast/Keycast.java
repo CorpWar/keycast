@@ -39,7 +39,8 @@ import java.util.logging.Logger;
  */
 public class Keycast extends JFrame{
 
-    //private static Keycast keycast;
+
+
     private PressedKeysFrame pkf;
     private TrayIcon trayIcon;
     private SystemTray tray;
@@ -50,10 +51,11 @@ public class Keycast extends JFrame{
     private JLabel shift, ctrl, alt;
     private GridBagConstraints gbc = new GridBagConstraints();
     private Color backgroundColor = Color.LIGHT_GRAY;
+    private final boolean isTranslucencySupported;
 
     public Keycast() {
         super("Corpwar Keycast");
-       //keycast = this;
+
         pkf = new PressedKeysFrame();
         // Set the event dispatcher to a swing safe executor service.
         GlobalScreen.setEventDispatcher(new SwingDispatchService());
@@ -119,19 +121,23 @@ public class Keycast extends JFrame{
         pkf.setLocation(getX(), getY() - pkf.getHeight());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        // Determine what the GraphicsDevice can support.
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        isTranslucencySupported = gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT);
         setTransparent();
+
         loadSettings();
 
         // Display the window.
         setVisible(true);
     }
 
-    private void setTransparent() {
-        // Determine what the GraphicsDevice can support.
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-        boolean isTranslucencySupported = gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT);
+    public boolean isTranslucencySupported() {
+        return isTranslucencySupported;
+    }
 
+    private void setTransparent() {
         //If shaped windows aren't supported, exit.
         // DON'T USING THIS AT THE MOMENT
 //        if (!gd.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT)) {
@@ -228,18 +234,28 @@ public class Keycast extends JFrame{
 
                 MenuItem settingsMenu = new MenuItem("Settings");
                 settingsMenu.addActionListener(e1 -> {
-                    Settings settings = new Settings();
+                    Settings settings = new Settings(this);
                     settings.setSize(200, 200);
                     settings.setLocationRelativeTo(null);
                     settings.pack();
+                    settings.setModalityType(Dialog.ModalityType.MODELESS);
                     settings.setVisible(true);
                 });
-                // TODO Fix Settings view
-                //trayMenu.add(settingsMenu);
+                trayMenu.add(settingsMenu);
                 MenuItem resetMenu = new MenuItem("Reset");
                 resetMenu.addActionListener(e1 -> {
                     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
                     setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+                    pkf.setLocation((int) getLocation().getX(), (int) getLocation().getY() - pkf.getHeight());
+                    if (isTranslucencySupported) {
+                        setOpacity(0.7f);
+                        getContentPane().setBackground(Color.LIGHT_GRAY);
+                        getPkf().getContentPane().setBackground(Color.LIGHT_GRAY);
+                        getPkf().setOpacity(0.7f);
+                    }
+                    getPkf().setTimeBeforeFade(2000);
+                    getPkf().setTimeFading(1000);
+                    saveSettings();
                 });
                 trayMenu.add(resetMenu);
 
@@ -267,39 +283,55 @@ public class Keycast extends JFrame{
 
     }
 
-    private void loadSettings() {
+    public void loadSettings() {
         Properties props = new Properties();
         InputStream is = null;
-
-        // First try loading from the current directory
         try {
             File f = new File("keycast.properties");
             if (f.exists()) {
                 is = new FileInputStream(f);
                 props.load(is);
-                System.out.println("windowX:" + props.getProperty("windowX", "0") + " windowY:" + props.getProperty("windowX", "0"));
-                System.out.println("opacity:" + props.getProperty("opacity", "0.7"));
-                //setLocation(new Integer(props.getProperty("windowX", "0")), new Integer(props.getProperty("windowX", "0")));
-                //keycast.setOpacity(new Float(props.getProperty("opacity", "0.7")));
+                setLocation(new Integer(props.getProperty("windowX", "0")), new Integer(props.getProperty("windowY", "0")));
+                pkf.setLocation((int) getLocation().getX(), (int) getLocation().getY() - pkf.getHeight());
+                if (isTranslucencySupported) {
+                    setOpacity(new Float(props.getProperty("opacity", "0.7")));
+                    getPkf().opacityValue = new Float(props.getProperty("keyWinOpacity", "0.7"));
+                }
+                getPkf().setTimeBeforeFade(new Long(props.getProperty("timeBeforeFade", "2000")));
+                getPkf().setTimeFading(new Long(props.getProperty("timeFading", "1000")));
+                getContentPane().setBackground(new Color(new Integer(props.getProperty("mainWinColor"))));
+                getPkf().getContentPane().setBackground(new Color(new Integer(props.getProperty("keyWinColor"))));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+
+                }
+            }
         }
-
-
     }
 
-    private void saveSettings() {
+    public void saveSettings() {
         try {
             Properties props = new Properties();
             props.setProperty("windowX", "" + this.getLocation().x);
-            props.setProperty("windowY", "" + this.getLocation().x);
+            props.setProperty("windowY", "" + this.getLocation().y);
             props.setProperty("opacity", "" + this.getOpacity());
+            props.setProperty("keyWinOpacity", "" + this.getPkf().opacityValue);
+            props.setProperty("timeBeforeFade", "" + this.getPkf().getTimeBeforeFade());
+            props.setProperty("timeFading", "" + this.getPkf().getTimeFading());
+            props.setProperty("mainWinColor", "" + this.getContentPane().getBackground().getRGB());
+            props.setProperty("keyWinColor", "" + this.getPkf().getContentPane().getBackground().getRGB());
             File f = new File("keycast.properties");
             OutputStream out = new FileOutputStream( f );
             props.store(out, "Settings for Corpwar Keycast");
+            out.close();
         }
         catch (Exception e ) {
             e.printStackTrace();
@@ -313,7 +345,5 @@ public class Keycast extends JFrame{
 
         // Create the GUI on the event-dispatching thread
         SwingUtilities.invokeLater(Keycast::new);
-
-
     }
 }
