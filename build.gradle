@@ -1,5 +1,5 @@
 group 'net.corpwar.keycast'
-version '0.9-SNAPSHOT'
+version '0.99-SNAPSHOT'
 
 apply plugin: 'java'
 
