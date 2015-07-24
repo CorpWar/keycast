@@ -146,7 +146,7 @@ public class PressedKeysFrame extends JDialog implements Runnable {
             sameText++;
             text.setText(keyText + " x" + sameText);
         } else {
-            if (isKeepAddingKeys()) {
+            if (isKeepAddingKeys() && isVisible()) {
                 OldTextDialog oldTextDialog = new OldTextDialog(this, sameText > 1 ? lastText + " x" + sameText : lastText, timeBeforeFade, timeFading, opacityValue, backgroundColor, text.getForeground());
                 oldTextDialog.setLocation(getX(), getY() - oldTextDialog.getHeight());
                 if (oldTextDialogList.size() >= amountWindows) {
