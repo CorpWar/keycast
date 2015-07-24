@@ -40,7 +40,7 @@ import java.util.logging.Logger;
 public class Keycast extends JFrame{
 
 
-
+    private Settings settings;
     private PressedKeysFrame pkf;
     private TrayIcon trayIcon;
     private SystemTray tray;
@@ -53,8 +53,11 @@ public class Keycast extends JFrame{
     private Color backgroundColor = Color.LIGHT_GRAY;
     private final boolean isTranslucencySupported;
 
+    private boolean showClickText = false;
+
     public Keycast() {
         super("Corpwar Keycast");
+        settings = new Settings(this);
 
         pkf = new PressedKeysFrame();
         // Set the event dispatcher to a swing safe executor service.
@@ -234,25 +237,28 @@ public class Keycast extends JFrame{
 
                 MenuItem settingsMenu = new MenuItem("Settings");
                 settingsMenu.addActionListener(e1 -> {
-                    Settings settings = new Settings(this);
                     settings.setSize(200, 200);
                     settings.setLocationRelativeTo(null);
                     settings.pack();
                     settings.setModalityType(Dialog.ModalityType.MODELESS);
+                    settings.populateData();
                     settings.setVisible(true);
                 });
                 trayMenu.add(settingsMenu);
                 MenuItem resetMenu = new MenuItem("Reset");
                 resetMenu.addActionListener(e1 -> {
+                    this.setVisible(true);
+                    getPkf().setVisible(true);
                     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
                     setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
                     pkf.setLocation((int) getLocation().getX(), (int) getLocation().getY() - pkf.getHeight());
                     if (isTranslucencySupported) {
                         setOpacity(0.7f);
-                        getContentPane().setBackground(Color.LIGHT_GRAY);
-                        getPkf().getContentPane().setBackground(Color.LIGHT_GRAY);
                         getPkf().setOpacity(0.7f);
                     }
+                    getContentPane().setBackground(Color.LIGHT_GRAY);
+                    getPkf().setBackgroundColor(Color.LIGHT_GRAY);
+                    getPkf().setTextColor(Color.BLACK);
                     getPkf().setTimeBeforeFade(2000);
                     getPkf().setTimeFading(1000);
                     saveSettings();
@@ -299,8 +305,10 @@ public class Keycast extends JFrame{
                 }
                 getPkf().setTimeBeforeFade(new Long(props.getProperty("timeBeforeFade", "2000")));
                 getPkf().setTimeFading(new Long(props.getProperty("timeFading", "1000")));
-                getContentPane().setBackground(new Color(new Integer(props.getProperty("mainWinColor"))));
-                getPkf().getContentPane().setBackground(new Color(new Integer(props.getProperty("keyWinColor"))));
+                getContentPane().setBackground(new Color(new Integer(props.getProperty("mainWinColor", "" + Color.LIGHT_GRAY))));
+                getPkf().setBackgroundColor(new Color(new Integer(props.getProperty("keyWinColor", "" + Color.LIGHT_GRAY))));
+                getPkf().setTextColor(new Color(new Integer(props.getProperty("textColor", "" + Color.BLACK.getRGB()))));
+                getPkf().setAmountWindows(Integer.valueOf(props.getProperty("amountHistoryWindows", "3")));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -328,6 +336,8 @@ public class Keycast extends JFrame{
             props.setProperty("timeFading", "" + this.getPkf().getTimeFading());
             props.setProperty("mainWinColor", "" + this.getContentPane().getBackground().getRGB());
             props.setProperty("keyWinColor", "" + this.getPkf().getContentPane().getBackground().getRGB());
+            props.setProperty("textColor", "" + this.getPkf().getTextColor().getRGB());
+            props.setProperty("amountHistoryWindows", "" + this.getPkf().getAmountWindows());
             File f = new File("keycast.properties");
             OutputStream out = new FileOutputStream( f );
             props.store(out, "Settings for Corpwar Keycast");

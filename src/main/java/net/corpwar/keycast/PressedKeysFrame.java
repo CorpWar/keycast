@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
+import java.util.*;
 
 /**
  * corpwar-keycast
@@ -47,13 +48,21 @@ public class PressedKeysFrame extends JDialog implements Runnable {
 
     // Time in milliseconds
     private long timeFading = 1000;
-    private long timeInFade = 0;
+    private long timeSinceLastChange = 0;
+
+    // If keep adding chars to string, if starting to fade new string will start
+    private boolean keepAddingChars = true;
 
     private Color backgroundColor = Color.LIGHT_GRAY;
 
     private JLabel text;
     private String lastText;
     private Integer sameText = 1;
+
+    // How many windows to show
+    private int amountWindows = 3;
+
+    private Queue<OldTextDialog> oldTextDialogList = new LinkedList<>();
 
     public PressedKeysFrame() {
         super();
@@ -111,26 +120,73 @@ public class PressedKeysFrame extends JDialog implements Runnable {
         this.timeFading = timeFading;
     }
 
+    public void setTextColor(Color textColor) {
+        text.setForeground(textColor);
+    }
+
+    public Color getTextColor() {
+        return text.getForeground();
+    }
+
+    public int getAmountWindows() {
+        return amountWindows;
+    }
+
+    public void setAmountWindows(int amountWindows) {
+        this.amountWindows = amountWindows;
+    }
+
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        this.getContentPane().setBackground(backgroundColor);
     }
 
     public void setKeyText(String keyText) {
-        if (keyText.equals(lastText)) {
+        if (keyText.equals(lastText) && isKeepAddingKeys()) {
             sameText++;
             text.setText(keyText + " x" + sameText);
         } else {
+            if (isKeepAddingKeys()) {
+                OldTextDialog oldTextDialog = new OldTextDialog(this, sameText > 1 ? lastText + " x" + sameText : lastText, timeBeforeFade, timeFading, opacityValue, backgroundColor, text.getForeground());
+                oldTextDialog.setLocation(getX(), getY() - oldTextDialog.getHeight());
+                if (oldTextDialogList.size() >= amountWindows) {
+                    OldTextDialog tempOldDialog = oldTextDialogList.poll();
+                    tempOldDialog.dispose();
+                }
+                for (OldTextDialog tempOldTextDialog : oldTextDialogList) {
+                    tempOldTextDialog.setLocation(tempOldTextDialog.getX(), tempOldTextDialog.getY() - tempOldTextDialog.getHeight());
+                }
+                oldTextDialogList.add(oldTextDialog);
+            }
             lastText = keyText;
             sameText = 1;
             text.setText(keyText);
         }
         setOpacity(opacityValue);
-        timeInFade = 0;
+        timeSinceLastChange = 0;
+    }
+
+    public void addCharToText(String charToAdd) {
+        lastText = charToAdd;
+        sameText = 1;
+        text.setText(charToAdd);
+        setOpacity(opacityValue);
+        timeSinceLastChange = 0;
     }
 
     public void dispose() {
         running = false;
         frame.interrupt();
+    }
+
+    public boolean isKeepAddingKeys() {
+        return timeSinceLastChange < timeBeforeFade;
+    }
+
+    public void removeOldWindowFromList(OldTextDialog oldTextDialog) {
+        if (oldTextDialogList.contains(oldTextDialog)) {
+            oldTextDialogList.remove(oldTextDialog);
+        }
     }
 
     @Override
@@ -141,6 +197,7 @@ public class PressedKeysFrame extends JDialog implements Runnable {
             deltaTime = System.currentTimeMillis() - lastTime;
 
             if (deltaTime >= sleepTime) {
+                timeSinceLastChange += deltaTime;
                 doUpdate(deltaTime);
             }
 
@@ -156,9 +213,7 @@ public class PressedKeysFrame extends JDialog implements Runnable {
     private void doUpdate(long deltaTime) {
         if (isTranslucencySupported) {
             if (getOpacity() > 0) {
-                timeInFade += deltaTime;
-                if (timeInFade > timeBeforeFade) {
-
+                if (timeSinceLastChange > timeBeforeFade) {
                     float opacity = getOpacity() - (deltaTime / (float)timeFading);
                     if (opacity < 0) {
                         setOpacity(0);
@@ -168,6 +223,5 @@ public class PressedKeysFrame extends JDialog implements Runnable {
                 }
             }
         }
-
     }
 }

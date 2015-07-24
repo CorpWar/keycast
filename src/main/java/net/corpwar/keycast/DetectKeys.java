@@ -26,9 +26,7 @@ import org.jnativehook.mouse.NativeMouseWheelListener;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * corpwar-keycast
@@ -41,7 +39,10 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener {
     private boolean ctrl = false, alt = false, shift = false;
     private HashMap<String, ImageIcon> keyImages = new HashMap<>();
     private List<Integer> acceptedKeys = new ArrayList<>();
+    private List<Integer> charKeys = new ArrayList<>();
     private StringBuilder sb;
+    private String lastStringChars = "";
+    private boolean isTyping = true;
 
     public DetectKeys(Keycast keycast, JLabel keyPressed, JLabel shiftLbl, JLabel ctrlLbl, JLabel altLbl) {
         this.keyPressed = keyPressed;
@@ -51,6 +52,7 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener {
         this.keycast = keycast;
         sb = new StringBuilder();
         addAccptedKeys();
+        addCharKeys();
         initKeyImages();
     }
 
@@ -115,6 +117,71 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener {
         // Enter
         acceptedKeys.add(28);
 
+        // NumPad keys
+        acceptedKeys.add(71);
+        acceptedKeys.add(72);
+        acceptedKeys.add(73);
+        acceptedKeys.add(75);
+        acceptedKeys.add(76);
+        acceptedKeys.add(77);
+        acceptedKeys.add(79);
+        acceptedKeys.add(80);
+        acceptedKeys.add(81);
+        acceptedKeys.add(82);
+
+        // Extra keys
+        acceptedKeys.add(NativeKeyEvent.VC_DELETE);
+        acceptedKeys.add(NativeKeyEvent.VC_INSERT);
+        acceptedKeys.add(NativeKeyEvent.VC_HOME);
+        acceptedKeys.add(NativeKeyEvent.VC_END);
+        acceptedKeys.add(NativeKeyEvent.VC_PAGE_UP);
+        acceptedKeys.add(NativeKeyEvent.VC_PAGE_DOWN);
+        acceptedKeys.add(NativeKeyEvent.VC_ESCAPE);
+        acceptedKeys.add(NativeKeyEvent.VC_SPACE);
+        acceptedKeys.add(NativeKeyEvent.VC_TAB);
+        acceptedKeys.add(NativeKeyEvent.VC_BACKSPACE);
+    }
+
+    private void addCharKeys() {
+        // 0-9
+        charKeys.add(2);
+        charKeys.add(3);
+        charKeys.add(4);
+        charKeys.add(5);
+        charKeys.add(6);
+        charKeys.add(7);
+        charKeys.add(8);
+        charKeys.add(9);
+        charKeys.add(10);
+        charKeys.add(11);
+
+        // A-Z
+        charKeys.add(30);
+        charKeys.add(48);
+        charKeys.add(46);
+        charKeys.add(32);
+        charKeys.add(18);
+        charKeys.add(33);
+        charKeys.add(34);
+        charKeys.add(35);
+        charKeys.add(23);
+        charKeys.add(36);
+        charKeys.add(37);
+        charKeys.add(38);
+        charKeys.add(50);
+        charKeys.add(49);
+        charKeys.add(24);
+        charKeys.add(25);
+        charKeys.add(16);
+        charKeys.add(19);
+        charKeys.add(31);
+        charKeys.add(20);
+        charKeys.add(22);
+        charKeys.add(47);
+        charKeys.add(17);
+        charKeys.add(45);
+        charKeys.add(21);
+        charKeys.add(44);
     }
 
     private void initKeyImages() {
@@ -145,8 +212,15 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener {
             ctrl = true;
         }
 
-        if (acceptedKeys.contains(nativeKeyEvent.getKeyCode())) {
+        if (isTyping && keycast.getPkf().isKeepAddingKeys() && !alt && !ctrl && charKeys.contains(nativeKeyEvent.getKeyCode())) {
+            String keyPress = NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode());
+            lastStringChars = lastStringChars + keyPress;
+            keycast.getPkf().addCharToText("< " + lastStringChars + " >");
+            keyPressed.setText(keyPress);
+            return;
+        }
 
+        if (acceptedKeys.contains(nativeKeyEvent.getKeyCode())) {
             String keyPressShow = "<";
             String keyPress = NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode());
             keyPressed.setText(keyPress);
@@ -159,7 +233,36 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener {
             if (ctrl) {
                 keyPressShow = keyPressShow + " Ctrl +";
             }
-            keycast.getPkf().setKeyText(keyPressShow + " " + keyPress + " >");
+            if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_DELETE) {
+                keycast.getPkf().setKeyText(keyPressShow + " Del >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_INSERT) {
+                keycast.getPkf().setKeyText(keyPressShow + " Insert >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_HOME) {
+                keycast.getPkf().setKeyText(keyPressShow + " Home >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_END) {
+                keycast.getPkf().setKeyText(keyPressShow + " End >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_PAGE_UP) {
+                keycast.getPkf().setKeyText(keyPressShow + " Page Up >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_PAGE_DOWN) {
+                keycast.getPkf().setKeyText(keyPressShow + " Page Down >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
+                keycast.getPkf().setKeyText(keyPressShow + " Esc >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_SPACE) {
+                keycast.getPkf().setKeyText(keyPressShow + " SpaceBar >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_TAB) {
+                keycast.getPkf().setKeyText(keyPressShow + " Tab >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_BACKSPACE) {
+                keycast.getPkf().setKeyText(keyPressShow + " Backspace >");
+            } else {
+                keycast.getPkf().setKeyText(keyPressShow + " " + keyPress + " >");
+            }
+            if (!shift && !alt && !ctrl && charKeys.contains(nativeKeyEvent.getKeyCode())) {
+                lastStringChars = keyPress;
+                isTyping = true;
+            } else {
+                lastStringChars = "";
+                isTyping = false;
+            }
         }
 
         changeActionKeys();
