@@ -104,6 +104,10 @@ public class PressedKeysFrame extends JDialog implements Runnable {
         frame.start();
     }
 
+    public void setKeepAddingChars(boolean keepAddingChars) {
+        this.keepAddingChars = keepAddingChars;
+    }
+
     public long getTimeBeforeFade() {
         return timeBeforeFade;
     }
@@ -142,11 +146,11 @@ public class PressedKeysFrame extends JDialog implements Runnable {
     }
 
     public void setKeyText(String keyText) {
-        if (keyText.equals(lastText) && isKeepAddingKeys()) {
+        if (keyText.equals(lastText)) {
             sameText++;
             text.setText(keyText + " x" + sameText);
         } else {
-            if (isKeepAddingKeys() && isVisible()) {
+            if (!isKeepAddingKeys() && isVisible()) {
                 OldTextDialog oldTextDialog = new OldTextDialog(this, sameText > 1 ? lastText + " x" + sameText : lastText, timeBeforeFade, timeFading, opacityValue, backgroundColor, text.getForeground());
                 oldTextDialog.setLocation(getX(), getY() - oldTextDialog.getHeight());
                 if (oldTextDialogList.size() >= amountWindows) {
@@ -180,7 +184,7 @@ public class PressedKeysFrame extends JDialog implements Runnable {
     }
 
     public boolean isKeepAddingKeys() {
-        return timeSinceLastChange < timeBeforeFade;
+        return keepAddingChars && timeSinceLastChange < timeBeforeFade;
     }
 
     public void removeOldWindowFromList(OldTextDialog oldTextDialog) {

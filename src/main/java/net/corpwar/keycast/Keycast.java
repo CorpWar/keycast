@@ -41,6 +41,7 @@ public class Keycast extends JFrame{
 
 
     private Settings settings;
+    private DetectKeys detectKeys;
     private PressedKeysFrame pkf;
     private TrayIcon trayIcon;
     private SystemTray tray;
@@ -52,8 +53,6 @@ public class Keycast extends JFrame{
     private GridBagConstraints gbc = new GridBagConstraints();
     private Color backgroundColor = Color.LIGHT_GRAY;
     private final boolean isTranslucencySupported;
-
-    private boolean showClickText = false;
 
     public Keycast() {
         super("Corpwar Keycast");
@@ -158,6 +157,10 @@ public class Keycast extends JFrame{
         return pkf;
     }
 
+    public DetectKeys getDetectKeys() {
+        return detectKeys;
+    }
+
     private void initTextLabel() {
         // Shift key
         shift = new JLabel();
@@ -220,10 +223,10 @@ public class Keycast extends JFrame{
             ex.printStackTrace();
             System.exit(1);
         }
-        DetectKeys detectKeys = new DetectKeys(this, keyLabel, shift, ctrl, alt);
+        detectKeys = new DetectKeys(this, keyLabel, shift, ctrl, alt, mouseLabel, mouseImages);
         GlobalScreen.addNativeKeyListener(detectKeys);
         GlobalScreen.addNativeMouseWheelListener(detectKeys);
-        GlobalScreen.addNativeMouseListener(new DetectMouseKeys(mouseLabel, mouseImages));
+        GlobalScreen.addNativeMouseListener(detectKeys);
     }
 
     private void addTrayIcon() {
@@ -309,6 +312,8 @@ public class Keycast extends JFrame{
                 getPkf().setBackgroundColor(new Color(new Integer(props.getProperty("keyWinColor", "" + Color.LIGHT_GRAY))));
                 getPkf().setTextColor(new Color(new Integer(props.getProperty("textColor", "" + Color.BLACK.getRGB()))));
                 getPkf().setAmountWindows(Integer.valueOf(props.getProperty("amountHistoryWindows", "3")));
+                getDetectKeys().setIsShowMouseEventText(Boolean.valueOf(props.getProperty("showMouseEventText", "false")));
+                getDetectKeys().setShowRealChars(Boolean.valueOf(props.getProperty("showRealChars", "false")));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -338,6 +343,8 @@ public class Keycast extends JFrame{
             props.setProperty("keyWinColor", "" + this.getPkf().getContentPane().getBackground().getRGB());
             props.setProperty("textColor", "" + this.getPkf().getTextColor().getRGB());
             props.setProperty("amountHistoryWindows", "" + this.getPkf().getAmountWindows());
+            props.setProperty("showMouseEventText", "" + this.getDetectKeys().isShowMouseEventText());
+            props.setProperty("showRealChars", "" + this.getDetectKeys().isShowRealChars());
             File f = new File("keycast.properties");
             OutputStream out = new FileOutputStream( f );
             props.store(out, "Settings for Corpwar Keycast");
