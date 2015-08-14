@@ -88,70 +88,70 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener, 
 
     private void addAccptedKeys() {
         // 0-9
-        acceptedKeys.add(2);
-        acceptedKeys.add(3);
-        acceptedKeys.add(4);
-        acceptedKeys.add(5);
-        acceptedKeys.add(6);
-        acceptedKeys.add(7);
-        acceptedKeys.add(8);
-        acceptedKeys.add(9);
-        acceptedKeys.add(10);
-        acceptedKeys.add(11);
+        acceptedKeys.add(NativeKeyEvent.VC_0);
+        acceptedKeys.add(NativeKeyEvent.VC_1);
+        acceptedKeys.add(NativeKeyEvent.VC_2);
+        acceptedKeys.add(NativeKeyEvent.VC_3);
+        acceptedKeys.add(NativeKeyEvent.VC_4);
+        acceptedKeys.add(NativeKeyEvent.VC_5);
+        acceptedKeys.add(NativeKeyEvent.VC_6);
+        acceptedKeys.add(NativeKeyEvent.VC_7);
+        acceptedKeys.add(NativeKeyEvent.VC_8);
+        acceptedKeys.add(NativeKeyEvent.VC_9);
 
         // A-Z
-        acceptedKeys.add(30);
-        acceptedKeys.add(48);
-        acceptedKeys.add(46);
-        acceptedKeys.add(32);
-        acceptedKeys.add(18);
-        acceptedKeys.add(33);
-        acceptedKeys.add(34);
-        acceptedKeys.add(35);
-        acceptedKeys.add(23);
-        acceptedKeys.add(36);
-        acceptedKeys.add(37);
-        acceptedKeys.add(38);
-        acceptedKeys.add(50);
-        acceptedKeys.add(49);
-        acceptedKeys.add(24);
-        acceptedKeys.add(25);
-        acceptedKeys.add(16);
-        acceptedKeys.add(19);
-        acceptedKeys.add(31);
-        acceptedKeys.add(20);
-        acceptedKeys.add(22);
-        acceptedKeys.add(47);
-        acceptedKeys.add(17);
-        acceptedKeys.add(45);
-        acceptedKeys.add(21);
-        acceptedKeys.add(44);
+        acceptedKeys.add(NativeKeyEvent.VC_A);
+        acceptedKeys.add(NativeKeyEvent.VC_B);
+        acceptedKeys.add(NativeKeyEvent.VC_C);
+        acceptedKeys.add(NativeKeyEvent.VC_D);
+        acceptedKeys.add(NativeKeyEvent.VC_E);
+        acceptedKeys.add(NativeKeyEvent.VC_F);
+        acceptedKeys.add(NativeKeyEvent.VC_G);
+        acceptedKeys.add(NativeKeyEvent.VC_H);
+        acceptedKeys.add(NativeKeyEvent.VC_I);
+        acceptedKeys.add(NativeKeyEvent.VC_J);
+        acceptedKeys.add(NativeKeyEvent.VC_K);
+        acceptedKeys.add(NativeKeyEvent.VC_L);
+        acceptedKeys.add(NativeKeyEvent.VC_M);
+        acceptedKeys.add(NativeKeyEvent.VC_N);
+        acceptedKeys.add(NativeKeyEvent.VC_O);
+        acceptedKeys.add(NativeKeyEvent.VC_P);
+        acceptedKeys.add(NativeKeyEvent.VC_Q);
+        acceptedKeys.add(NativeKeyEvent.VC_R);
+        acceptedKeys.add(NativeKeyEvent.VC_S);
+        acceptedKeys.add(NativeKeyEvent.VC_T);
+        acceptedKeys.add(NativeKeyEvent.VC_U);
+        acceptedKeys.add(NativeKeyEvent.VC_V);
+        acceptedKeys.add(NativeKeyEvent.VC_W);
+        acceptedKeys.add(NativeKeyEvent.VC_X);
+        acceptedKeys.add(NativeKeyEvent.VC_Y);
+        acceptedKeys.add(NativeKeyEvent.VC_Z);
 
         // F1-F10
-        acceptedKeys.add(59);
-        acceptedKeys.add(60);
-        acceptedKeys.add(61);
-        acceptedKeys.add(62);
-        acceptedKeys.add(63);
-        acceptedKeys.add(64);
-        acceptedKeys.add(65);
-        acceptedKeys.add(66);
-        acceptedKeys.add(67);
-        acceptedKeys.add(68);
-        acceptedKeys.add(87);
-        acceptedKeys.add(88);
+        acceptedKeys.add(NativeKeyEvent.VC_F1);
+        acceptedKeys.add(NativeKeyEvent.VC_F2);
+        acceptedKeys.add(NativeKeyEvent.VC_F3);
+        acceptedKeys.add(NativeKeyEvent.VC_F4);
+        acceptedKeys.add(NativeKeyEvent.VC_F5);
+        acceptedKeys.add(NativeKeyEvent.VC_F6);
+        acceptedKeys.add(NativeKeyEvent.VC_F7);
+        acceptedKeys.add(NativeKeyEvent.VC_F8);
+        acceptedKeys.add(NativeKeyEvent.VC_F9);
+        acceptedKeys.add(NativeKeyEvent.VC_F10);
+        acceptedKeys.add(NativeKeyEvent.VC_F11);
+        acceptedKeys.add(NativeKeyEvent.VC_F12);
 
         // NumPad keys
-        acceptedKeys.add(71);
-        acceptedKeys.add(72);
-        acceptedKeys.add(73);
-        acceptedKeys.add(75);
-        acceptedKeys.add(76);
-        acceptedKeys.add(77);
-        acceptedKeys.add(79);
-        acceptedKeys.add(80);
-        acceptedKeys.add(81);
-        acceptedKeys.add(82);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_0);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_1);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_2);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_3);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_4);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_5);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_6);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_7);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_8);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_9);
 
         // Extra keys
         acceptedKeys.add(NativeKeyEvent.VC_DELETE);
@@ -173,44 +173,44 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener, 
 
     private void addCharKeys() {
         // 0-9
-        charKeys.add(2);
-        charKeys.add(3);
-        charKeys.add(4);
-        charKeys.add(5);
-        charKeys.add(6);
-        charKeys.add(7);
-        charKeys.add(8);
-        charKeys.add(9);
-        charKeys.add(10);
-        charKeys.add(11);
+        charKeys.add(NativeKeyEvent.VC_0);
+        charKeys.add(NativeKeyEvent.VC_1);
+        charKeys.add(NativeKeyEvent.VC_2);
+        charKeys.add(NativeKeyEvent.VC_3);
+        charKeys.add(NativeKeyEvent.VC_4);
+        charKeys.add(NativeKeyEvent.VC_5);
+        charKeys.add(NativeKeyEvent.VC_6);
+        charKeys.add(NativeKeyEvent.VC_7);
+        charKeys.add(NativeKeyEvent.VC_8);
+        charKeys.add(NativeKeyEvent.VC_9);
 
         // A-Z
-        charKeys.add(30);
-        charKeys.add(48);
-        charKeys.add(46);
-        charKeys.add(32);
-        charKeys.add(18);
-        charKeys.add(33);
-        charKeys.add(34);
-        charKeys.add(35);
-        charKeys.add(23);
-        charKeys.add(36);
-        charKeys.add(37);
-        charKeys.add(38);
-        charKeys.add(50);
-        charKeys.add(49);
-        charKeys.add(24);
-        charKeys.add(25);
-        charKeys.add(16);
-        charKeys.add(19);
-        charKeys.add(31);
-        charKeys.add(20);
-        charKeys.add(22);
-        charKeys.add(47);
-        charKeys.add(17);
-        charKeys.add(45);
-        charKeys.add(21);
-        charKeys.add(44);
+        charKeys.add(NativeKeyEvent.VC_A);
+        charKeys.add(NativeKeyEvent.VC_B);
+        charKeys.add(NativeKeyEvent.VC_C);
+        charKeys.add(NativeKeyEvent.VC_D);
+        charKeys.add(NativeKeyEvent.VC_E);
+        charKeys.add(NativeKeyEvent.VC_F);
+        charKeys.add(NativeKeyEvent.VC_G);
+        charKeys.add(NativeKeyEvent.VC_H);
+        charKeys.add(NativeKeyEvent.VC_I);
+        charKeys.add(NativeKeyEvent.VC_J);
+        charKeys.add(NativeKeyEvent.VC_K);
+        charKeys.add(NativeKeyEvent.VC_L);
+        charKeys.add(NativeKeyEvent.VC_M);
+        charKeys.add(NativeKeyEvent.VC_N);
+        charKeys.add(NativeKeyEvent.VC_O);
+        charKeys.add(NativeKeyEvent.VC_P);
+        charKeys.add(NativeKeyEvent.VC_Q);
+        charKeys.add(NativeKeyEvent.VC_R);
+        charKeys.add(NativeKeyEvent.VC_S);
+        charKeys.add(NativeKeyEvent.VC_T);
+        charKeys.add(NativeKeyEvent.VC_U);
+        charKeys.add(NativeKeyEvent.VC_V);
+        charKeys.add(NativeKeyEvent.VC_W);
+        charKeys.add(NativeKeyEvent.VC_X);
+        charKeys.add(NativeKeyEvent.VC_Y);
+        charKeys.add(NativeKeyEvent.VC_Z);
     }
 
     private void addExtraKeys() {
@@ -271,7 +271,9 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener, 
             }
 
             String keyPress = NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode());
-            keyPressed.setText(keyPress);
+            if (!shift && !alt && !ctrl) {
+                keyPressed.setText(keyPress);
+            }
             if (shift) {
                 keyPressShow = keyPressShow + " Shift +";
             }
