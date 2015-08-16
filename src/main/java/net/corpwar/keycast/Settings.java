@@ -203,12 +203,15 @@ public class Settings extends JDialog {
             slidKeyWin.setEnabled(false);
         }
         txtAmountHistoryWindow.setText("" + keycast.getPkf().getAmountWindows());
+        txtKeyOffsetX.setText("" + keycast.getLocation().getX());
+        txtKeyOffsetY.setText("" + keycast.getLocation().getY());
     }
 
     private void onOK() {
         keycast.getPkf().setTimeBeforeFade(Long.valueOf(txtBeforeFade.getText()));
         keycast.getPkf().setTimeFading(Long.valueOf(txtFading.getText()));
         keycast.getPkf().setAmountWindows(Integer.valueOf(txtAmountHistoryWindow.getText()));
+        keycast.setLocation(Integer.valueOf(txtKeyOffsetX.getText()), Integer.valueOf(txtKeyOffsetY.getText()));
         keycast.saveSettings();
         setVisible(false);
     }
