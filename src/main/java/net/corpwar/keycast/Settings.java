@@ -203,15 +203,20 @@ public class Settings extends JDialog {
             slidKeyWin.setEnabled(false);
         }
         txtAmountHistoryWindow.setText("" + keycast.getPkf().getAmountWindows());
-        txtKeyOffsetX.setText("" + keycast.getLocation().getX());
-        txtKeyOffsetY.setText("" + keycast.getLocation().getY());
+        txtKeyOffsetX.setText("" + (int) keycast.getLocation().getX());
+        txtKeyOffsetY.setText("" + (int) keycast.getLocation().getY());
     }
 
     private void onOK() {
-        keycast.getPkf().setTimeBeforeFade(Long.valueOf(txtBeforeFade.getText()));
-        keycast.getPkf().setTimeFading(Long.valueOf(txtFading.getText()));
-        keycast.getPkf().setAmountWindows(Integer.valueOf(txtAmountHistoryWindow.getText()));
-        keycast.setLocation(Integer.valueOf(txtKeyOffsetX.getText()), Integer.valueOf(txtKeyOffsetY.getText()));
+        try {
+            keycast.getPkf().setTimeBeforeFade(Long.valueOf(txtBeforeFade.getText()));
+            keycast.getPkf().setTimeFading(Long.valueOf(txtFading.getText()));
+            keycast.getPkf().setAmountWindows(Integer.valueOf(txtAmountHistoryWindow.getText()));
+            keycast.setLocation(Integer.valueOf(txtKeyOffsetX.getText()), Integer.valueOf(txtKeyOffsetY.getText()));
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(null, nfe.getMessage(), "Error on parameter", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         keycast.saveSettings();
         setVisible(false);
     }
