@@ -10,7 +10,7 @@ You can just [download the jar](https://github.com/CorpWar/keycast/releases/down
 
 ![CorpWar KeyCast Screenshot](http://www.corpwar.net/wp-content/uploads/2015/07/KeyCast_mainScreen.png)
 
-![CorpWar KeyCast Settings](http://www.corpwar.net/wp-content/uploads/2015/07/KeyCast_settings.png)
+![CorpWar KeyCast Settings](http://www.corpwar.net/wp-content/uploads/2015/07/settings_keycast.png)
 
 ## Source
 If you have other idés then just fork the source and make something fun out of it. It is all open source.
