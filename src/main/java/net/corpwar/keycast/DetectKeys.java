@@ -153,6 +153,12 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener, 
         acceptedKeys.add(NativeKeyEvent.VC_KP_8);
         acceptedKeys.add(NativeKeyEvent.VC_KP_9);
 
+        // Minus, plus, divided, multiplication
+        acceptedKeys.add(NativeKeyEvent.VC_KP_SUBTRACT);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_ADD);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_DIVIDE);
+        acceptedKeys.add(NativeKeyEvent.VC_KP_MULTIPLY);
+
         // Extra keys
         acceptedKeys.add(NativeKeyEvent.VC_DELETE);
         acceptedKeys.add(NativeKeyEvent.VC_INSERT);
@@ -230,6 +236,13 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener, 
 
         // Enter
         extraKeys.add(NativeKeyEvent.VC_ENTER);
+
+        // Minus, plus, divided, multiplication
+        extraKeys.add(NativeKeyEvent.VC_KP_SUBTRACT);
+        extraKeys.add(NativeKeyEvent.VC_KP_ADD);
+        extraKeys.add(NativeKeyEvent.VC_KP_DIVIDE);
+        extraKeys.add(NativeKeyEvent.VC_KP_MULTIPLY);
+
     }
 
     private void initKeyImages() {
@@ -320,6 +333,14 @@ public class DetectKeys implements NativeKeyListener, NativeMouseWheelListener, 
                 keycast.getPkf().setKeyText(keyPressShow + " Backspace >");
             } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_ENTER) {
                 keycast.getPkf().setKeyText(keyPressShow + " Enter >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_KP_SUBTRACT) {
+                keycast.getPkf().setKeyText(keyPressShow + " - >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_KP_ADD) {
+                keycast.getPkf().setKeyText(keyPressShow + " + >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_KP_DIVIDE) {
+                keycast.getPkf().setKeyText(keyPressShow + " / >");
+            } else if (nativeKeyEvent.getKeyCode() == NativeKeyEvent.VC_KP_MULTIPLY) {
+                keycast.getPkf().setKeyText(keyPressShow + " * >");
             }
             isExtraKeyPressed = true;
         } else {
